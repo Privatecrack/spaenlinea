@@ -4,6 +4,7 @@ using spa.Repository.Interface.IRepository;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Repository.Repositories.Utils
 {
@@ -11,34 +12,43 @@ namespace Repository.Repositories.Utils
     {
         protected RepositoryContext RepositoryContext { get; set; }
 
-        public RepositoryBase(RepositoryContext repositoryContext)
+        public RepositoryBase(RepositoryContext repositoryContext) 
         {
             RepositoryContext = repositoryContext;
         }
-
-        public IQueryable<T> FindAll()
+        public async void Create(T entity)
         {
-            return this.RepositoryContext.Set<T>().AsNoTracking();
-        }
-
-        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression)
-        {
-            return this.RepositoryContext.Set<T>().Where(expression).AsNoTracking();
-        }
-
-        public void Create(T entity)
-        {
-            this.RepositoryContext.Set<T>().Add(entity);
-        }
-
-        public void Update(T entity)
-        {
-            this.RepositoryContext.Set<T>().Update(entity);
+            await this.RepositoryContext.Set<T>().AddAsync(entity);
         }
 
         public void Delete(T entity)
         {
             this.RepositoryContext.Set<T>().Remove(entity);
+            this.RepositoryContext.SaveChanges();
+        }
+
+        public async Task<IQueryable<T>> FindAll()
+        {
+            var query = await this.RepositoryContext.Set<T>().AsNoTracking().ToListAsync();
+            return query.AsQueryable();
+        }
+
+        public async Task<IQueryable<T>> FindByCondition(Expression<Func<T, bool>> expression)
+        {
+            var query = await this.RepositoryContext.Set<T>().Where(expression).AsNoTracking().ToListAsync();
+            return query.AsQueryable();
+        }
+
+        public async Task saveChange()
+        {
+            await RepositoryContext.SaveChangesAsync();
+        }
+
+        public void Update(T entity)
+        {
+            this.RepositoryContext.Set<T>().Update(entity);
+            this.RepositoryContext.SaveChanges();
+
         }
     }
 }

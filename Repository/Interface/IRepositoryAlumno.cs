@@ -1,15 +1,14 @@
-﻿using spa.Models;
+﻿using spa.Repository.Interface.IRepository;
+using spaenlinea.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace spa.Repository.Interface.IRepository
+namespace spaenlinea.Repository.Interface
 {
     public interface IRepositoryAlumno : IRepositoryBase<Alumno>
     {
-        IQueryable<Alumno> GetAll();
-        Alumno Save(Alumno model);
-        Alumno DeleteByName(string name);
-        Alumno Modify(Alumno model);
-        Alumno GetbyID(Guid id);
+
     }
 }

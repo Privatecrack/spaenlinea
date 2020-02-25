@@ -1,9 +1,11 @@
+using GenericProjectBase.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
+using System.IO;
 
 namespace spaenlinea
 {
@@ -19,31 +21,51 @@ namespace spaenlinea
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
+            services.ConfigureCors();
+            services.ConfigureIISIntegration();
+            services.ConfigureLoggerService();
+            services.ConfigureClasesWithInterfaces();
+            services.AutoMapperConfiguration();
+            services.ConfigureMySqlContext(Configuration);
+            services.AddControllers();
+
+
+         /*   services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
-            });
+            });*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
 
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCors("CorsPolicy");
             app.UseSpaStaticFiles();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.All
 
-            app.UseMvc(routes =>
+            });
+
+           // app.UseRouting();
+           // app.UseAuthorization();
+          //  app.UseEndPoint(endpoints =>
+         //   {
+         //       endpoints.MapControllers();
+          //  });
+
+         /*   app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
@@ -61,7 +83,7 @@ namespace spaenlinea
                 {
                     spa.UseAngularCliServer(npmScript: "start");
                 }
-            });
+            });*/
         }
     }
 }
