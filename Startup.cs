@@ -58,12 +58,12 @@ namespace spaenlinea
 
             });
 
-           // app.UseRouting();
-           // app.UseAuthorization();
-          //  app.UseEndPoint(endpoints =>
-         //   {
-         //       endpoints.MapControllers();
-          //  });
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
          /*   app.UseMvc(routes =>
             {

@@ -2,12 +2,13 @@
 using spaenlinea.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace spa.Repository.Data
 {
-    public class RepositoryContext : DbContext
+    public class RepositoryContext : Microsoft.EntityFrameworkCore.DbContext
     {
         public RepositoryContext(DbContextOptions options)
             : base(options)
@@ -15,6 +16,6 @@ namespace spa.Repository.Data
 
         }
 
-        public DbSet<Alumno> Alumno { get; set; }
+        public System.Data.Entity.DbSet<Alumno> Alumno { get; set; }
     }
 }
